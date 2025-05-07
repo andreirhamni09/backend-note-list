@@ -5,8 +5,6 @@ services:
       dockerfile: docker/php/Dockerfile
     container_name: backend-note-list
     image: backend-image
-    ports:
-      - "8001:8000"
     volumes:
       - ./app:/var/www
     networks:
