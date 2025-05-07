@@ -15,7 +15,7 @@ pipeline {
 
     stage('Prepare .env') {
       steps {
-        bat 'cp .env.example .env'
+        bat 'copy .env.example .env'
       }
     }
 
