@@ -15,7 +15,7 @@ pipeline {
 
     stage('Prepare .env') {
       steps {
-        bat 'copy .env.example .env'
+        bat 'copy app\\.env.example app\\.env'
       }
     }
 
@@ -32,7 +32,7 @@ pipeline {
         bat "docker exec ${APP_SERVICE} composer install --no-interaction --prefer-dist"
       }
     }
-    
+
     stage('Fix Permissions (for Windows Docker volumes)') {
       steps {
         // Hanya akan bekerja di container (tidak di host Windows)

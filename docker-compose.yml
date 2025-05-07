@@ -6,8 +6,6 @@ services:
     container_name: backend-note-list
     volumes:
       - ./app:/var/www
-    env_file:
-      - .env
     depends_on:
       - mysql
     networks:
