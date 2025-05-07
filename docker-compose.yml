@@ -9,6 +9,8 @@ services:
       - ./app:/var/www
     networks:
       - laravel
+    env_file:
+      - .env
 
   webserver:
     image: nginx:latest
