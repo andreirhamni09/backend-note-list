@@ -32,6 +32,14 @@ pipeline {
         bat "docker exec ${APP_SERVICE} composer install --no-interaction --prefer-dist"
       }
     }
+    
+    stage('Fix Permissions (for Windows Docker volumes)') {
+      steps {
+        // Hanya akan bekerja di container (tidak di host Windows)
+        bat "docker exec ${APP_SERVICE} chmod 664 /var/www/.env"
+        bat "docker exec ${APP_SERVICE} chown www-data:www-data /var/www/.env"
+      }
+    }
 
     stage('Laravel Setup') {
       steps {
