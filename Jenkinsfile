@@ -31,8 +31,9 @@ pipeline {
 
         stage('Build and Start Docker') {
             steps {
-                bat 'docker-compose down -v'
-                bat 'docker-compose up -d --build'
+                bat 'docker-compose down --remove-orphans'
+                bat 'docker-compose build --no-cache'
+                bat 'docker-compose up -d'
             }
         }
 
