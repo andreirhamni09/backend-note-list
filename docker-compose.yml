@@ -30,10 +30,10 @@ services:
     image: mysql:lts
     container_name: mysql-note-list
     environment:
-      MYSQL_ROOT_PASSWORD: P@ssw0rd
+      MYSQL_ROOT_PASSWORD: secret
       MYSQL_DATABASE: laravel
       MYSQL_USER: laravel
-      MYSQL_PASSWORD: P@ssw0rd
+      MYSQL_PASSWORD: secret
     ports:
       - "3306:3306"
     volumes:

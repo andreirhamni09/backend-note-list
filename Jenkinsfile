@@ -32,7 +32,7 @@ pipeline {
 
         stage('Build and Start Docker') {
             steps {
-                bat 'docker-compose down --remove-orphans'
+                bat 'docker-compose down -v --remove-orphans'
                 bat 'docker-compose build --no-cache'
                 bat 'docker-compose up -d'
             }
