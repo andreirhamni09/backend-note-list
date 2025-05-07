@@ -38,12 +38,6 @@ pipeline {
             }
         }
 
-        stage('Fix File Permissions') {
-            steps {
-                bat 'docker exec backend-note-list chmod 664 /var/www/.env'
-            }
-        }
-
         stage('Laravel Setup') {
             steps {
                 bat 'docker exec backend-note-list composer install'
