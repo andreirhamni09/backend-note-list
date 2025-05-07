@@ -20,6 +20,14 @@ pipeline {
                 '''
             }
         }
+        
+        stage('Prepare .env') {
+            steps {
+                bat 'if not exist app\\.env copy app\\.env.example app\\.env'
+                bat 'icacls app\\.env /grant Everyone:F'
+            }
+        }
+
 
         stage('Build and Start Docker') {
             steps {
