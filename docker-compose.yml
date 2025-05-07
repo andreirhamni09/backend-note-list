@@ -8,10 +8,10 @@ services:
       - ./app:/var/www
     env_file:
       - .env
-    networks:
-      - laravel
     depends_on:
       - mysql
+    networks:
+      - laravel
 
   webserver:
     image: nginx:latest
@@ -28,11 +28,13 @@ services:
 
   mysql:
     image: mysql:8
-    container_name: mysql
+    container_name: mysql-note-list
     restart: always
     environment:
-      MYSQL_DATABASE: aplikasi-note-list
       MYSQL_ROOT_PASSWORD: P@ssw0rd
+      MYSQL_DATABASE: aplikasi-note-list
+    ports:
+      - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
     networks:

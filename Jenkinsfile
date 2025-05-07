@@ -15,11 +15,11 @@ pipeline {
 
     stage('Prepare .env') {
       steps {
-        bat 'copy .env.example .env'
+        bat 'cp .env.example .env'
       }
     }
 
-    stage('Docker Compose Build') {
+    stage('Build & Start Containers') {
       steps {
         bat 'docker-compose down -v || true'
         bat 'docker-compose build --no-cache'
@@ -27,16 +27,9 @@ pipeline {
       }
     }
 
-    stage('Install Composer Dependencies') {
+    stage('Install Dependencies') {
       steps {
         bat "docker exec ${APP_SERVICE} composer install --no-interaction --prefer-dist"
-      }
-    }
-
-    stage('Set Laravel Permissions') {
-      steps {
-        bat "docker exec ${APP_SERVICE} chown -R www-data:www-data storage bootstrap/cache"
-        bat "docker exec ${APP_SERVICE} chmod -R 775 storage bootstrap/cache"
       }
     }
 
@@ -48,7 +41,7 @@ pipeline {
       }
     }
 
-    stage('Run Laravel Tests') {
+    stage('Test') {
       steps {
         bat "docker exec ${APP_SERVICE} php artisan test || true"
       }
@@ -56,14 +49,8 @@ pipeline {
   }
 
   post {
-    success {
-      echo '✅ Build and deployment successful!'
-    }
-    failure {
-      echo '❌ Build failed.'
-    }
     always {
-      echo 'ℹ️ Pipeline completed.'
+      echo 'Build pipeline complete.'
     }
   }
 }
