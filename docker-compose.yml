@@ -4,13 +4,14 @@ services:
       context: .
       dockerfile: docker/php/Dockerfile
     container_name: backend-note-list
-    image: backend-image
     volumes:
       - ./app:/var/www
-    networks:
-      - laravel
     env_file:
       - .env
+    networks:
+      - laravel
+    depends_on:
+      - mysql
 
   webserver:
     image: nginx:latest
@@ -24,6 +25,21 @@ services:
       - app
     networks:
       - laravel
+
+  mysql:
+    image: mysql:8
+    container_name: mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: aplikasi-note-list
+      MYSQL_ROOT_PASSWORD: P@ssw0rd
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - laravel
+
+volumes:
+  mysql_data:
 
 networks:
   laravel:

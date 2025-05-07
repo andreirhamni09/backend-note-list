@@ -1,47 +1,69 @@
 pipeline {
-    agent any
+  agent any
 
-    stages {
-        stage('Clone Repository') {
-            steps {
-                git url: 'https://github.com/andreirhamni09/backend-note-list.git', branch: 'master'
-            }
-        }
+  environment {
+    COMPOSE_FILE = 'docker-compose.yml'
+    APP_SERVICE = 'backend-note-list'
+  }
 
-        stage('Cleanup Docker (Optional)') {
-            steps {
-                // Stop and remove all matching containers (if exists)
-                bat '''
-                docker stop backend-note-list || exit 0
-                docker stop nginx-note-list || exit 0
-                docker rm backend-note-list || exit 0
-                docker rm nginx-note-list || exit 0
-                '''
-            }
-        }
-        
-        stage('Prepare .env') {
-            steps {
-                bat 'if not exist app\\.env copy app\\.env.example app\\.env'
-                bat 'icacls app\\.env /grant Everyone:F'
-            }
-        }
-
-
-        stage('Build and Start Docker') {
-            steps {
-                bat 'docker-compose down --remove-orphans'
-                bat 'docker-compose build --no-cache'
-                bat 'docker-compose up -d'
-            }
-        }
-
-        stage('Laravel Setup') {
-            steps {
-                bat 'docker exec backend-note-list composer install'
-                bat 'ping -n 11 127.0.0.1 > nul' // ini delay pengganti timeout
-                bat 'docker exec backend-note-list php artisan key:generate'
-            }
-        }
+  stages {
+    stage('Checkout') {
+      steps {
+        git 'https://github.com/andreirhamni09/backend-note-list.git'
+      }
     }
+
+    stage('Prepare .env') {
+      steps {
+        bat 'cp .env.example .env'
+      }
+    }
+
+    stage('Docker Compose Build') {
+      steps {
+        bat 'docker-compose down -v || true'
+        bat 'docker-compose build --no-cache'
+        bat 'docker-compose up -d'
+      }
+    }
+
+    stage('Install Composer Dependencies') {
+      steps {
+        bat "docker exec ${APP_SERVICE} composer install --no-interaction --prefer-dist"
+      }
+    }
+
+    stage('Set Laravel Permissions') {
+      steps {
+        bat "docker exec ${APP_SERVICE} chown -R www-data:www-data storage bootstrap/cache"
+        bat "docker exec ${APP_SERVICE} chmod -R 775 storage bootstrap/cache"
+      }
+    }
+
+    stage('Laravel Setup') {
+      steps {
+        bat "docker exec ${APP_SERVICE} php artisan config:clear"
+        bat "docker exec ${APP_SERVICE} php artisan key:generate"
+        bat "docker exec ${APP_SERVICE} php artisan migrate --force"
+      }
+    }
+
+    stage('Run Laravel Tests') {
+      steps {
+        bat "docker exec ${APP_SERVICE} php artisan test || true"
+      }
+    }
+  }
+
+  post {
+    success {
+      echo '✅ Build and deployment successful!'
+    }
+    failure {
+      echo '❌ Build failed.'
+    }
+    always {
+      echo 'ℹ️ Pipeline completed.'
+    }
+  }
 }
