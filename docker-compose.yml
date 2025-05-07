@@ -31,7 +31,7 @@ services:
     container_name: mysql-note-list
     environment:
       MYSQL_ROOT_PASSWORD: P@ssw0rd
-      MYSQL_DATABASE: aplikasi-note-list
+      MYSQL_DATABASE: laravel
       MYSQL_USER: laravel
       MYSQL_PASSWORD: P@ssw0rd
     ports:
