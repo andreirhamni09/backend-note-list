@@ -17,9 +17,13 @@ COPY ./app /var/www
 # Copy Laravel app
 COPY ./app/.env.example /var/www/.env
 
+EXPOSE 8000
+
 # Install Laravel dependencies
 RUN composer install --no-interaction --prefer-dist --optimize-autoloader
 
 # Set permissions
 RUN chown -R www-data:www-data /var/www \
     && chmod -R 755 /var/www
+
+CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
