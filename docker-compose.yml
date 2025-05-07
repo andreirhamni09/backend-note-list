@@ -9,8 +9,6 @@ services:
     image: backend-image
     volumes:
       - ./app:/var/www
-    depends_on:
-      - mysql
     networks:
       - laravel
 
@@ -26,23 +24,6 @@ services:
       - app
     networks:
       - laravel
-  mysql:
-    image: mysql:lts
-    container_name: mysql-note-list
-    environment:
-      MYSQL_ROOT_PASSWORD: P@ssw0rd
-      MYSQL_DATABASE: aplikasi-note-list
-      MYSQL_USER: laravel
-      MYSQL_PASSWORD: P@ssw0rd
-    ports:
-      - "3306:3306"
-    volumes:
-      - dbdata:/var/lib/mysql
-    networks:
-      - laravel
 
 networks:
   laravel:
-
-volumes:
-  dbdata:

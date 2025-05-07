@@ -13,10 +13,8 @@ pipeline {
                 // Stop and remove all matching containers (if exists)
                 bat '''
                 docker stop backend-note-list || exit 0
-                docker stop mysql-note-list || exit 0
                 docker stop nginx-note-list || exit 0
                 docker rm backend-note-list || exit 0
-                docker rm mysql-note-list || exit 0
                 docker rm nginx-note-list || exit 0
                 docker volume rm backend-note-list_dbdata || exit 0
                 '''
