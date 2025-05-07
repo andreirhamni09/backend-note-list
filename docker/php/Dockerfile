@@ -17,8 +17,6 @@ COPY ./app /var/www
 # Copy Laravel app
 COPY ./app/.env.example /var/www/.env
 
-COPY docker/wait-for-mysql.sh /usr/local/bin/wait-for-mysql.sh
-
 # Install Laravel dependencies
 RUN composer install --no-interaction --prefer-dist --optimize-autoloader
 
