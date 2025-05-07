@@ -23,4 +23,3 @@ RUN composer install --no-interaction --prefer-dist --optimize-autoloader
 # Set permissions
 RUN chown -R www-data:www-data /var/www \
     && chmod -R 755 /var/www \
-    && chmod +x /usr/local/bin/wait-for-mysql.sh
