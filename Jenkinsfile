@@ -36,7 +36,6 @@ pipeline {
                 bat 'docker exec backend-note-list composer install'
                 bat 'ping -n 11 127.0.0.1 > nul' // ini delay pengganti timeout
                 bat 'docker exec backend-note-list php artisan key:generate'
-                bat 'docker exec backend-note-list php artisan migrate --force'
             }
         }
     }
