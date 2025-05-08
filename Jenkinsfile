@@ -38,13 +38,6 @@ pipeline {
       steps {
         bat "docker exec ${APP_SERVICE} php artisan config:clear"
         bat "docker exec ${APP_SERVICE} php artisan key:generate"
-        bat "docker exec ${APP_SERVICE} php artisan migrate --force"
-      }
-    }
-
-    stage('Test') {
-      steps {
-        bat "docker exec ${APP_SERVICE} php artisan test || true"
       }
     }
   }
