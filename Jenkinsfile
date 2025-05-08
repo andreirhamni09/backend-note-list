@@ -20,13 +20,6 @@ pipeline {
       }
     }
 
-    stage('Fix Permissions (for Windows Docker volumes)') {
-      steps {
-        // Hanya akan bekerja di container (tidak di host Windows)
-        bat "docker exec backend-note-list chmod 664 /var/www/.env"
-      }
-    }
-
     stage('Laravel Setup') {
       steps {
         bat "docker exec ${APP_SERVICE} php artisan config:clear"
