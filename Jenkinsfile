@@ -12,24 +12,11 @@ pipeline {
         git 'https://github.com/andreirhamni09/backend-note-list.git'
       }
     }
-
-    stage('Prepare .env') {
-      steps {
-        bat 'copy app\\.env.example app\\.env'
-      }
-    }
-
     stage('Build & Start Containers') {
       steps {
         bat 'docker-compose down -v || true'
         bat 'docker-compose build --no-cache'
         bat 'docker-compose up -d'
-      }
-    }
-
-    stage('Install Dependencies') {
-      steps {
-        bat "docker exec ${APP_SERVICE} composer install --no-interaction --prefer-dist"
       }
     }
 
