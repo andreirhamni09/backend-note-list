@@ -29,7 +29,7 @@ pipeline {
 
     stage('Install Dependencies') {
       steps {
-        bat "docker exec ${APP_SERVICE} composer install"
+        bat "docker exec ${APP_SERVICE} composer install --no-interaction --prefer-dist"
       }
     }
 
