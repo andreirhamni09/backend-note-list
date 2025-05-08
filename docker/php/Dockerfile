@@ -16,9 +16,14 @@ RUN apt-get update && apt-get install -y \
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-RUN composer install
+
+
+WORKDIR /var/www
+
+COPY ./app /var/www
+
+
+RUN composer install --no-interaction --prefer-dist
 
 RUN chown -R www-data:www-data /var/www \
     && chmod -R 755 /var/www 
-
-WORKDIR /var/www
