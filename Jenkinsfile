@@ -12,12 +12,26 @@ pipeline {
         git 'https://github.com/andreirhamni09/backend-note-list.git'
       }
     }
-    stage('Build & Start Containers') {
-      steps {
-        bat 'docker-compose down -v || true'
-        bat 'docker-compose build --no-cache'
-        bat 'docker-compose up -d'
-      }
+    
+    stage('Build and Start Docker') {
+        steps {
+            bat 'docker-compose down --remove-orphans'
+            bat 'docker-compose build --no-cache'
+            bat 'docker-compose up -d'
+        }
+    }
+    
+    stage('Prepare .env') {
+        steps {
+            bat 'if not exist app\\.env copy app\\.env.example app\\.env'
+            bat 'icacls app\\.env /grant Everyone:F'
+        }
+    }
+    
+    stage('Fix File Permissions') {
+        steps {
+            bat "docker exec ${APP_SERVICE} chmod 664 /var/www/.env"
+        }
     }
 
     stage('Laravel Setup') {
