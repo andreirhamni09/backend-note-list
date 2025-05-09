@@ -1,8 +1,10 @@
 <?php
 
 namespace App\Providers;
-
 use Illuminate\Support\ServiceProvider;
+
+use App\Repositories\NoteList\NoteListRepositoryInterface;
+use App\Repositories\NoteList\NoteListRepository;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -11,7 +13,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->bind(NoteListRepositoryInterface::class, NoteListRepository::class);
     }
 
     /**
