@@ -29,7 +29,6 @@ pipeline {
     
     stage('Prepare .env') {
         steps {
-            bat 'rm'
             bat 'if not exist app\\.env copy app\\.env.example app\\.env'
             bat 'icacls app\\.env /grant Everyone:F'
         }
