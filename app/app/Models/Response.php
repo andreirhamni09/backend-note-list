@@ -15,22 +15,60 @@ class Response extends Model
         $this->error    = $error;
         $this->data     = $data; 
     }
-    public function ResponseJson($status, $messages, $error, $data){
-        $res = [
+    private function ResponseSuccess($status = 200, $error = '') {
+        $success    = [
             'status'    => $status,
+            'error'     => $error
+        ];
+        return $success;
+    }
+    public function ResponseSuccessJson($messages, $data){
+        $success    = $this->ResponseSuccess();
+        $res = [
+            'status'    => $success['status'],
             'messages'  => $messages,
-            'error'     => $error,
+            'error'     => $success['error'],
             'data'      => $data
         ];
         return $res;
     }
 
-    public function ResponseEmptyDataJson($status = 200, $messages = 'Empty Data', $error = '', $data = []){
-        $res = [
+    private function ResponseEmpty($status = 204, $error = '', $data = []) {
+        $empty = [
             'status'    => $status,
-            'messages'  => $messages,
             'error'     => $error,
             'data'      => $data
+        ];
+        return $empty;
+    }
+
+    public function ResponseEmptyJson($messages){
+        $empty = $this->ResponseEmpty();
+        $res = [
+            'status'    => $empty['status'],
+            'messages'  => $messages,
+            'error'     => $empty['error'],
+            'data'      => $empty['data']
+        ];
+        return $res;
+    }
+
+    private function ResponseInternalServerError($status = 500, $messages = 'Internal Server Error', $data = null) {
+        $internalServerError = [
+            'status'    => $status,
+            'messages'  => $messages,
+            'data'      => $data
+        ];
+        return $internalServerError;
+    }
+
+    public function ResponseInternalServerErrorJson($error) {
+        $internalServerError = $this->ResponseInternalServerError();
+        $res = [
+            'status'      => $internalServerError['status'],
+            'messages'    => $internalServerError['messages'],
+            'error'       => $error,
+            'data'        => $internalServerError['data']
         ];
         return $res;
     }

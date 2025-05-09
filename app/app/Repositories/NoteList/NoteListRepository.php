@@ -20,11 +20,11 @@ class NoteListRepository implements NoteListRepositoryInterface
         try {
             $data = $this->noteLists->GetAll();
             if(count($data) < 1){
-                return $this->response->ResponseEmptyDataJson();
+                return $this->response->ResponseEmptyJson("Data Note List Empty");
             } 
-            return $this->response->ResponseJson(200, 'Success Get Note List Data', '', $data);
+            return $this->response->ResponseSuccessJson('Success Get Note List Data', $data);
         } catch (Exception $e) {
-            return $this->response->ResponseJson(500, 'Internal Server Error', $e->getMessage(), null);
+            return $this->response->ResponseInternalServerErrorJson($e->getMessage());
         }
     }   
 }
