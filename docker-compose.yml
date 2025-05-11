@@ -35,7 +35,7 @@ services:
       MYSQL_ROOT_PASSWORD: P@ssw0rd
       MYSQL_DATABASE: aplikasi-note-list
     ports:
-      - "3306:3306"
+      - "3307:3306"
     volumes:
       - backend-mysql_data:/var/lib/mysql
     networks:
