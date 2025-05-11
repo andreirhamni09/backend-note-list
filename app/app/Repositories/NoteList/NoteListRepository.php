@@ -13,8 +13,7 @@ class NoteListRepository implements NoteListRepositoryInterface
         $this->noteLists    = new NoteList();
         $this->response     = new Response();
     }
-
-
+    
     public function GetAll()
     {
         try {

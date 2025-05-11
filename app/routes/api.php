@@ -1,8 +1,7 @@
 <?php
-
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\NoteListController;
+use App\Http\Controllers\AuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,3 +17,5 @@ use App\Http\Controllers\NoteListController;
 Route::prefix('note-lists')->group(function () {
     Route::get('/get-all', [NoteListController::class, 'index']);
 });
+
+Route::post('/register', [AuthController::class, 'register']);

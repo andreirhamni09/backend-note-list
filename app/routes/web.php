@@ -13,9 +13,3 @@ use App\Http\Controllers\ControllerTesting;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-
-Route::get('/', function () {
-    return view('welcome');
-});
-
-Route::get('/tes_db', [ControllerTesting::class, "index"]);

@@ -15,6 +15,8 @@ class Response extends Model
         $this->error    = $error;
         $this->data     = $data; 
     }
+
+# -- Response Success
     private function ResponseSuccess($status = 200, $error = '') {
         $success    = [
             'status'    => $status,
@@ -32,7 +34,9 @@ class Response extends Model
         ];
         return $res;
     }
+# -- Response Success
 
+# -- Response Empty Data
     private function ResponseEmpty($status = 204, $error = '', $data = []) {
         $empty = [
             'status'    => $status,
@@ -52,7 +56,9 @@ class Response extends Model
         ];
         return $res;
     }
+# -- Response Empty Data
 
+# -- Response Internal Server Error
     private function ResponseInternalServerError($status = 500, $messages = 'Internal Server Error', $data = null) {
         $internalServerError = [
             'status'    => $status,
@@ -72,4 +78,25 @@ class Response extends Model
         ];
         return $res;
     }
+# -- Response Internal Server Error
+
+# -- Response Validate Error
+    private function ResponseUnvalidated($status = 422) {
+        $internalServerError = [
+            'status'    => $status
+        ];
+        return $internalServerError;
+    }
+
+    public function ResponseUnvalidatedJson($messages, $error, $data) {
+        $unvalidated    = $this->ResponseUnvalidated();
+        $res = [
+            'status'      => $unvalidated['status'],
+            'messages'    => $messages,
+            'error'       => $error,
+            'data'        => $data
+        ];
+        return $res;
+    }
+# -- Response Validate Error
 }
