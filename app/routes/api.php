@@ -2,6 +2,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\NoteListController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ControllerTesting;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,3 +20,6 @@ Route::prefix('note-lists')->group(function () {
 });
 
 Route::post('/register', [AuthController::class, 'register']);
+
+
+Route::get('/register', [ControllerTesting::class, 'index']);

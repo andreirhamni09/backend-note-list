@@ -15,9 +15,8 @@ pipeline {
     
     stage('Build and Start Docker') {
         steps {
-            bat 'docker-compose down --remove-orphans'
-            bat 'docker-compose build --no-cache'
-            bat 'docker-compose up -d'
+            bat 'docker-compose down'
+            bat 'docker-compose up -d --build'
         }
     }
 
@@ -43,6 +42,8 @@ pipeline {
     stage('Laravel Setup') {
       steps {
         bat "docker exec ${APP_SERVICE} php artisan config:clear"
+        bat "docker exec ${APP_SERVICE} php artisan cache:clear"
+        bat "docker exec ${APP_SERVICE} php artisan config:cache"
         bat "docker exec ${APP_SERVICE} php artisan key:generate"
       }
     }
