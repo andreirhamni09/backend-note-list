@@ -6,7 +6,7 @@ pipeline {
     APP_SERVICE = 'backend-note-list'
     DB_HOST = 'mysql-note-list'
     DB_PORT = '3306'
-    WAIT_SCRIPT = 'docker/wait-for-it.sh'
+    WAIT_SCRIPT = 'docker/wait-for-mysql.sh'
   }
 
   stages {
@@ -44,9 +44,9 @@ pipeline {
 
     stage('Wait for MySQL') {
       steps {
-        bat "docker cp ${WAIT_SCRIPT} ${APP_SERVICE}:/wait-for-it.sh"
-        bat "docker exec ${APP_SERVICE} chmod +x /wait-for-it.sh"
-        bat "docker exec ${APP_SERVICE} /wait-for-it.sh ${DB_HOST}:${DB_PORT} --timeout=60 --strict -- echo MySQL is up"
+        bat "docker cp ${WAIT_SCRIPT} ${APP_SERVICE}:/wait-for-mysql.sh"
+        bat "docker exec ${APP_SERVICE} chmod +x /wait-for-mysql.sh"
+        bat "docker exec ${APP_SERVICE} /wait-for-mysql.sh ${DB_HOST}:${DB_PORT} --timeout=60 --strict -- echo MySQL is up"
       }
     }
 
