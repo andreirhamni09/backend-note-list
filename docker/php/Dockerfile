@@ -13,7 +13,7 @@ WORKDIR /var/www
 
 # Copy Laravel app
 COPY ./app /var/www
-COPY ./docker/wait-for-mysql.sh /var/www/wait-for-mysql.sh
+COPY ./docker/wait-for-mysql.sh /wait-for-mysql.sh
 
 # Install Laravel dependencies
 RUN composer install --no-interaction --prefer-dist --optimize-autoloader
