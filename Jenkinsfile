@@ -42,11 +42,9 @@ pipeline {
       }
     }
 
-    stage('Wait for MySQL') {
+    stage('Fix Line Endings (Optional)') {
       steps {
-        bat "docker cp ${WAIT_SCRIPT} ${APP_SERVICE}:/wait-for-mysql.sh"
-        bat "docker exec ${APP_SERVICE} chmod +x /wait-for-mysql.sh"
-        bat "docker exec ${APP_SERVICE} /wait-for-mysql.sh ${DB_HOST}:${DB_PORT} --timeout=60 --strict -- echo MySQL is up"
+        bat "powershell -Command \"(Get-Content docker/wait-for-mysql.sh) -replace '\\r','' | Set-Content docker/wait-for-mysql.sh\""
       }
     }
 
