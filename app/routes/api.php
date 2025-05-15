@@ -15,11 +15,15 @@ use App\Http\Controllers\ControllerTesting;
 |
 */
 
-Route::prefix('note-lists')->group(function () {
-    Route::get('/get-all', [NoteListController::class, 'index']);
+Route::prefix('NoteList')->group(function () {
+    Route::get('/GetAll/{id_user}', [NoteListController::class, 'GetAll']);
+    Route::get('/GetByIdNoteList/{id_user}/{id_note_lists}', [NoteListController::class, 'GetByIdNoteList']);
+    Route::post('/AddNoteList', [NoteListController::class, 'AddNoteList']);
+    Route::post('/UpdateNoteList', [NoteListController::class, 'UpdateNoteList']);
 });
 
 Route::post('/register', [AuthController::class, 'register']);
 
-
-Route::get('/register', [ControllerTesting::class, 'index']);
+Route::prefix('Testing')->group(function () {
+    Route::get('/KoneksiDB', [ControllerTesting::class, 'index']);
+});
