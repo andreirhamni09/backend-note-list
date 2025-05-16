@@ -12,7 +12,7 @@ services:
     env_file:
       - ./app/.env
     entrypoint: ["/wait-for-mysql.sh", "php-fpm"]
-    
+
   mysql:
     image: mysql:8.0
     container_name: mysql-note-list
@@ -40,4 +40,3 @@ services:
 
 networks:
   laravel:
-    external: true
