@@ -25,6 +25,18 @@ pipeline {
                 bat "docker-compose -f ${COMPOSE_FILE} up -d"
             }
         }
+        stage('Remove .env') {
+          steps {
+            bat 'del app\\.env'
+          }
+        }
+        
+        stage('Prepare .env') {
+          steps {
+            bat 'if not exist app\\.env copy app\\.env.example app\\.env'
+            bat 'icacls app\\.env /grant Everyone:F'
+          }
+        }
 
         stage('Wait for MySQL Ready') {
             steps {
