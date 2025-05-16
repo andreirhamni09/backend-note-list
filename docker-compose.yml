@@ -7,8 +7,6 @@ services:
     image: backend-note-list
     volumes:
       - ./app:/var/www
-    networks:
-      - laravel
     env_file:
       - ./app/.env
 
@@ -24,7 +22,3 @@ services:
       - app 
     networks:
       - laravel
-
-networks:
-  laravel:
-    external: true
