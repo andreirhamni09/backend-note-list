@@ -15,6 +15,13 @@ pipeline {
         git 'https://github.com/andreirhamni09/backend-note-list.git'
       }
     }
+    stage('Build and Start Docker') {
+      steps {
+        bat 'docker-compose down -v'
+        bat 'docker-compose build'
+        bat 'docker-compose up -d'
+      }
+    }
 
     stage('Remove Network First') {
       steps {
@@ -26,14 +33,6 @@ pipeline {
       steps {
         bat "docker network create laravel"
         bat "docker network connect laravel mysql-note-list"
-      }
-    }
-
-    stage('Build and Start Docker') {
-      steps {
-        bat 'docker-compose down -v'
-        bat 'docker-compose build'
-        bat 'docker-compose up -d'
       }
     }
 
