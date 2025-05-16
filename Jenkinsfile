@@ -15,7 +15,11 @@ pipeline {
         git 'https://github.com/andreirhamni09/backend-note-list.git'
       }
     }
-    
+    stage('Remove Container') {
+      steps {
+        bat 'docker rm -f mysql-note-list'
+      }
+    }
     stage('Build and Start Docker') {
       steps {
         bat 'docker-compose down --remove-orphans'
