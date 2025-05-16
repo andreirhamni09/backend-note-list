@@ -18,6 +18,8 @@ pipeline {
     stage('Remove Container') {
       steps {
         bat 'docker rm -f mysql-note-list'
+        bat 'docker rm -f nginx-note-list'
+        bat 'docker rm -f backend-note-list'
       }
     }
     stage('Build and Start Docker') {
