@@ -2,9 +2,9 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = 'backend-note-list'
-        DOCKERFILE_PATH = 'docker/php/Dockerfile'
         COMPOSE_FILE = 'docker-compose.yml'
+        APP_CONTAINER = 'backend-note-list'
+        MYSQL_CONTAINER = 'mysql-note-list'
     }
 
     stages {
@@ -14,57 +14,53 @@ pipeline {
             }
         }
 
-        stage('Build Docker Image') {
+        stage('Build Images') {
             steps {
-                script {
-                    docker.build("${IMAGE_NAME}", "-f ${DOCKERFILE_PATH} .")
-                }
+                bat "docker-compose -f ${COMPOSE_FILE} build"
             }
         }
 
-        stage('Run Containers') {
+        stage('Start Containers') {
             steps {
-                // Jalankan docker-compose up di mode detached
-                bat "docker-compose -f ${COMPOSE_FILE} up -d --build"
+                bat "docker-compose -f ${COMPOSE_FILE} up -d"
             }
         }
 
         stage('Wait for MySQL Ready') {
             steps {
-                // Tunggu MySQL siap dengan cek port 3306
-                // Bisa diganti sesuai kebutuhan
-                bat '''
-                echo "Menunggu MySQL siap..."
-                until nc -z mysql-note-list 3306; do
-                    echo "MySQL belum siap, tunggu 5 detik..."
-                    sleep 5
-                done
-                echo "MySQL siap."
-                '''
+                script {
+                    def ready = false
+                    for (int i = 0; i < 12; i++) { // cek max 1 menit (12*5 detik)
+                        def logs = bat(script: "docker logs ${MYSQL_CONTAINER}", returnStdout: true).trim()
+                        if (logs.contains("ready for connections")) {
+                            ready = true
+                            break
+                        }
+                        bat "timeout /t 5 /nobreak"
+                    }
+                    if (!ready) {
+                        error "MySQL tidak siap setelah timeout"
+                    }
+                }
             }
         }
 
-        stage('Run Migrations') {
+        stage('Run Laravel Migration') {
             steps {
-                // Jalankan migration Laravel via docker exec di container app
-                bat "docker exec backend-note-list php artisan migrate --path=database/custom_migrations --force"
+                bat "docker exec ${APP_CONTAINER} php artisan migrate --force"
             }
         }
 
-        stage('Post Deployment') {
+        stage('Finish') {
             steps {
-                echo "Deployment selesai!"
-                // Tambahkan langkah lain seperti testing, notify, dll
+                echo 'Deployment selesai, aplikasi sudah berjalan!'
             }
         }
     }
 
     post {
-        always {
-            echo 'Pipeline selesai'
-        }
         failure {
-            echo 'Pipeline gagal, cek log'
+            echo 'Build gagal, cek log untuk detail kesalahan.'
         }
     }
 }
