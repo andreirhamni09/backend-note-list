@@ -15,6 +15,14 @@ pipeline {
         git 'https://github.com/andreirhamni09/backend-note-list.git'
       }
     }
+    
+    stage('Setup Network') {
+      steps {
+        bat "docker network create laravel"
+        bat "docker network connect laravel mysql-note-list"
+      }
+    }
+
     stage('Build and Start Docker') {
       steps {
         bat 'docker-compose down -v'
@@ -45,12 +53,6 @@ pipeline {
     stage('Fix Line Endings (Optional)') {
       steps {
         bat "powershell -Command \"(Get-Content docker/wait-for-mysql.sh) -replace '\\r','' | Set-Content docker/wait-for-mysql.sh\""
-      }
-    }
-    stage('Setup Network') {
-      steps {
-        bat "docker network create laravel"
-        bat "docker network connect laravel mysql-note-list"
       }
     }
 
