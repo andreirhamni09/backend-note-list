@@ -15,7 +15,13 @@ pipeline {
         git 'https://github.com/andreirhamni09/backend-note-list.git'
       }
     }
-    
+
+    stage('Remove Network First') {
+      steps {
+        bat "docker network rm laravel"
+      }
+    }
+
     stage('Setup Network') {
       steps {
         bat "docker network create laravel"
