@@ -47,7 +47,7 @@ pipeline {
 
         stage('Run Laravel Migration') {
             steps {
-                bat "docker exec ${APP_CONTAINER} php artisan migrate --force"
+                bat "docker exec ${APP_CONTAINER} php artisan migrate --path=database/custom_migrations --force"
             }
         }
 
