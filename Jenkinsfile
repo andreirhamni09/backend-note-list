@@ -38,31 +38,33 @@ pipeline {
           }
         }
 
-        stage('Wait for MySQL Ready') {
-          steps {
-              script {
-                  def ready = false
-                  for (int i = 0; i < 12; i++) {
-                      def result = bat(
-                          script: "docker exec backend-note-list php -r \"@mysqli_connect('mysql-note-list', 'root', 'P@ssw0rd') ? exit(0) : exit(1);\"",
-                          returnStatus: true
-                      )
-                      if (result == 0) {
-                          ready = true
-                          break
-                      }
-                      echo "MySQL belum siap, tunggu 5 detik..."
-                      bat 'ping -n 6 127.0.0.1 >nul'
-                  }
-                  if (!ready) {
-                      error "MySQL tidak siap setelah timeout"
-                  }
-              }
-          }
-      }
+      //   stage('Wait for MySQL Ready') {
+      //     steps {
+      //         script {
+      //             def ready = false
+      //             for (int i = 0; i < 15; i++) {
+      //                 def result = bat(
+      //                     script: "docker exec backend-note-list php -r \"@mysqli_connect('mysql-note-list', 'root', 'P@ssw0rd') ? exit(0) : exit(1);\"",
+      //                     returnStatus: true
+      //                 )
+      //                 if (result == 0) {
+      //                     ready = true
+      //                     break
+      //                 }
+      //                 echo "MySQL belum siap, tunggu 5 detik..."
+      //                 bat 'ping -n 6 127.0.0.1 >nul'
+      //             }
+      //             if (!ready) {
+      //                 error "MySQL tidak siap setelah timeout"
+      //             }
+      //         }
+      //     }
+      // }
 
       stage('Run Laravel Migration') {
           steps {
+              bat "docker exec ${APP_CONTAINER} php artisan config:clear"
+              bat "docker exec ${APP_CONTAINER} php artisan cache:clear"
               bat "docker exec ${APP_CONTAINER} php artisan migrate --path=database/custom_migrations --force"
           }
       }
