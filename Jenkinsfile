@@ -30,7 +30,7 @@ pipeline {
             steps {
                 script {
                     def ready = false
-                    for (int i = 0; i < 100; i++) {
+                    for (int i = 0; i < 12; i++) {
                         def logs = bat(script: "docker logs ${MYSQL_CONTAINER}", returnStdout: true).trim()
                         if (logs.contains("ready for connections")) {
                             ready = true
