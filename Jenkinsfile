@@ -23,6 +23,7 @@ pipeline {
 
     stage('Remove Network First') {
       steps {
+        bat "docker network disconnect laravel mysql-note-list"
         bat "docker network rm laravel"
       }
     }
