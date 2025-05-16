@@ -10,7 +10,7 @@ services:
     depends_on:
       - mysql
     networks:
-      - backend-note-list_laravel
+      - laravel
     env_file:
       - ./app/.env
 
@@ -45,4 +45,6 @@ volumes:
   backend-mysql_data:
 
 networks:
-  backend-note-list_laravel:
+  laravel:
+    external: true
+    name: backend-note-list_laravel
