@@ -4,6 +4,7 @@ pipeline {
   environment {
     COMPOSE_FILE = 'docker-compose.yml'
     APP_SERVICE = 'backend-note-list'
+    NGINX_SERVICE = 'nginx-note-list'
     DB_HOST = 'mysql-note-list'
     DB_PORT = '3306'
     WAIT_SCRIPT = 'docker/wait-for-mysql.sh'
@@ -18,6 +19,7 @@ pipeline {
     stage('Shutdown Container & remove First') {
       steps {
         bat "docker rm -f ${APP_SERVICE}"
+        bat "docker rm -f ${NGINX_SERVICE}"
         bat "docker-compose down -v"
       }
     }
