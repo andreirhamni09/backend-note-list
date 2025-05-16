@@ -15,15 +15,16 @@ pipeline {
         git 'https://github.com/andreirhamni09/backend-note-list.git'
       }
     }
-    stage('Shutdown Container First') {
+    stage('Shutdown Container & remove First') {
       steps {
-        bat 'docker-compose down'
+        bat "docker rm -f ${APP_SERVICE}"
+        bat "docker-compose down -v"
       }
     }
 
     stage('Remove Network First') {
       steps {
-        bat "docker network disconnect laravel mysql-note-list"
+        bat "docker network disconnect laravel ${DB_HOST}"
         bat "docker network rm laravel"
       }
     }
