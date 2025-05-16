@@ -48,8 +48,7 @@ pipeline {
     }
     stage('Setup Network') {
       steps {
-        bat "docker network create backend-network"
-        bat "docker network connect backend-network mysql-note-list"
+        bat "docker network connect backend-note-list_laravel mysql-note-list"
       }
     }
 
