@@ -11,6 +11,19 @@ services:
       - laravel
     env_file:
       - ./app/.env
+    entrypoint: ["/wait-for-mysql.sh", "php-fpm"]
+    
+  mysql:
+    image: mysql:8.0
+    container_name: mysql-note-list
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: aplikasi-note-list
+      MYSQL_ROOT_PASSWORD: P@ssw0rd
+    volumes:
+      - ./mysql-data:/var/lib/mysql
+    networks:
+      - laravel
 
   webserver:
     image: nginx:latest

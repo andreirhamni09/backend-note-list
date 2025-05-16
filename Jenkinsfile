@@ -1,89 +1,70 @@
 pipeline {
-  agent any
+    agent any
 
-  environment {
-    COMPOSE_FILE = 'docker-compose.yml'
-    APP_SERVICE = 'backend-note-list'
-    NGINX_SERVICE = 'nginx-note-list'
-    DB_HOST = 'mysql-note-list'
-    DB_PORT = '3306'
-    WAIT_SCRIPT = 'docker/wait-for-mysql.sh'
-  }
-
-  stages {
-    stage('Checkout') {
-      steps {
-        git 'https://github.com/andreirhamni09/backend-note-list.git'
-      }
-    }
-    stage('Shutdown Container & remove First') {
-      steps {
-        bat "docker rm -f ${APP_SERVICE}"
-        bat "docker rm -f ${NGINX_SERVICE}"
-        bat "docker-compose down -v"
-      }
+    environment {
+        IMAGE_NAME = 'backend-note-list'
+        DOCKERFILE_PATH = 'docker/php/Dockerfile'
+        COMPOSE_FILE = 'docker-compose.yml'
     }
 
-    stage('Remove Network First') {
-      steps {
-        bat "docker network disconnect laravel ${DB_HOST}"
-        bat "docker network rm laravel"
-      }
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    docker.build("${IMAGE_NAME}", "-f ${DOCKERFILE_PATH} .")
+                }
+            }
+        }
+
+        stage('Run Containers') {
+            steps {
+                // Jalankan docker-compose up di mode detached
+                bat "docker-compose -f ${COMPOSE_FILE} up -d --build"
+            }
+        }
+
+        stage('Wait for MySQL Ready') {
+            steps {
+                // Tunggu MySQL siap dengan cek port 3306
+                // Bisa diganti sesuai kebutuhan
+                bat '''
+                echo "Menunggu MySQL siap..."
+                until nc -z mysql-note-list 3306; do
+                    echo "MySQL belum siap, tunggu 5 detik..."
+                    sleep 5
+                done
+                echo "MySQL siap."
+                '''
+            }
+        }
+
+        stage('Run Migrations') {
+            steps {
+                // Jalankan migration Laravel via docker exec di container app
+                bat "docker exec backend-note-list php artisan migrate --path=database/custom_migrations --force"
+            }
+        }
+
+        stage('Post Deployment') {
+            steps {
+                echo "Deployment selesai!"
+                // Tambahkan langkah lain seperti testing, notify, dll
+            }
+        }
     }
 
-    stage('Setup Network') {
-      steps {
-        bat "docker network create laravel"
-        bat "docker network connect laravel mysql-note-list"
-      }
+    post {
+        always {
+            echo 'Pipeline selesai'
+        }
+        failure {
+            echo 'Pipeline gagal, cek log'
+        }
     }
-    
-    stage('Build and Start Docker') {
-      steps {
-        bat 'docker-compose build'
-        bat 'docker-compose up -d'
-      }
-    }
-
-    stage('Remove .env') {
-      steps {
-        bat 'del app\\.env'
-      }
-    }
-    
-    stage('Prepare .env') {
-      steps {
-        bat 'if not exist app\\.env copy app\\.env.example app\\.env'
-        bat 'icacls app\\.env /grant Everyone:F'
-      }
-    }
-    
-    stage('Fix File Permissions') {
-      steps {
-        bat "docker exec ${APP_SERVICE} chmod 664 /var/www/.env"
-      }
-    }
-
-    stage('Fix Line Endings (Optional)') {
-      steps {
-        bat "powershell -Command \"(Get-Content docker/wait-for-mysql.sh) -replace '\\r','' | Set-Content docker/wait-for-mysql.sh\""
-      }
-    }
-
-    stage('Laravel Setup') {
-      steps {
-        bat "docker exec ${APP_SERVICE} php artisan config:clear"
-        bat "docker exec ${APP_SERVICE} php artisan cache:clear"
-        bat "docker exec ${APP_SERVICE} php artisan config:cache"
-        bat "docker exec ${APP_SERVICE} php artisan key:generate"
-        bat "docker exec ${APP_SERVICE} php artisan migrate --path=database/custom_migrations --force"
-      }
-    }
-  }
-
-  post {
-    always {
-      echo 'Build pipeline complete.'
-    }
-  }
 }
