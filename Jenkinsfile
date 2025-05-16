@@ -32,7 +32,7 @@ pipeline {
 
     stage('Remove .env') {
       steps {
-        bat 'if exist del app\\.env'
+        bat 'del app\\.env'
       }
     }
     
