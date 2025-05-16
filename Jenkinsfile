@@ -17,7 +17,7 @@ pipeline {
     }
     stage('Shutdown Container First') {
       steps {
-        bat 'docker-compose down -v'
+        bat 'docker-compose down'
       }
     }
 
