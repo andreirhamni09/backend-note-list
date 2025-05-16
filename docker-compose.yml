@@ -7,27 +7,12 @@ services:
     image: backend-note-list
     volumes:
       - ./app:/var/www
-    networks:
-      - laravel
     depends_on:
       - mysql
-    env_file:
-      - ./app/.env
-    entrypoint: ["/wait-for-mysql.sh", "php-fpm"]
-
-  mysql:
-    image: mysql:8.0
-    container_name: mysql-note-list
-    restart: unless-stopped
-    ports:
-      - "3306:3306"
-    environment:
-      MYSQL_DATABASE: aplikasi-note-list
-      MYSQL_ROOT_PASSWORD: P@ssw0rd
-    volumes:
-      - ./mysql-data:/var/lib/mysql
     networks:
       - laravel
+    env_file:
+      - ./app/.env
 
   webserver:
     image: nginx:latest
@@ -41,6 +26,23 @@ services:
       - app 
     networks:
       - laravel
+
+  mysql:
+    image: mysql:8
+    container_name: mysql-note-list
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: P@ssw0rd
+      MYSQL_DATABASE: aplikasi-note-list
+    ports:
+      - "3306:3306"
+    volumes:
+      - backend-mysql_data:/var/lib/mysql
+    networks:
+      - laravel
+
+volumes:
+  backend-mysql_data:
 
 networks:
   laravel:
