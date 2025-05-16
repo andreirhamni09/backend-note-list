@@ -30,13 +30,13 @@ pipeline {
             steps {
                 script {
                     def ready = false
-                    for (int i = 0; i < 12; i++) { // cek max 1 menit (12*5 detik)
+                    for (int i = 0; i < 12; i++) {
                         def logs = bat(script: "docker logs ${MYSQL_CONTAINER}", returnStdout: true).trim()
                         if (logs.contains("ready for connections")) {
                             ready = true
                             break
                         }
-                        bat 'cmd /c "timeout /t 5 /nobreak >nul"'
+                        bat 'ping -n 6 127.0.0.1 >nul'
                     }
                     if (!ready) {
                         error "MySQL tidak siap setelah timeout"
