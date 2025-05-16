@@ -36,7 +36,7 @@ pipeline {
                             ready = true
                             break
                         }
-                        bat "timeout /t 5 /nobreak"
+                        bat 'cmd /c "timeout /t 5 /nobreak >nul"'
                     }
                     if (!ready) {
                         error "MySQL tidak siap setelah timeout"
