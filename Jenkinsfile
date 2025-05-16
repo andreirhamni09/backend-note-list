@@ -46,6 +46,12 @@ pipeline {
         bat "powershell -Command \"(Get-Content docker/wait-for-mysql.sh) -replace '\\r','' | Set-Content docker/wait-for-mysql.sh\""
       }
     }
+    stage('Setup Network') {
+      steps {
+        bat "docker network create backend-network"
+        bat "docker network connect backend-network mysql-note-list"
+      }
+    }
 
     stage('Laravel Setup') {
       steps {
