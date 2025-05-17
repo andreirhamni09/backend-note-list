@@ -31,5 +31,6 @@ return new class extends Migration
         Schema::table('note_lists', function (Blueprint $table) {
             $table->dropForeign(['id_user']);
         });
+        Schema::dropIfExists('note_lists');
     }
 };
