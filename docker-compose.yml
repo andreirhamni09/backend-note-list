@@ -11,8 +11,6 @@ services:
       - mysql
     networks:
       - laravel
-    env_file:
-      - ./app/.env
 
   webserver:
     image: nginx:latest
@@ -47,4 +45,3 @@ volumes:
 networks:
   laravel:
     external: true
-    name: backend-note-list_laravel
