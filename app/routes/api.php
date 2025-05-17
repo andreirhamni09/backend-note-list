@@ -21,8 +21,11 @@ Route::prefix('NoteList')->group(function () {
     Route::post('/AddNoteList', [NoteListController::class, 'AddNoteList']);
     Route::post('/UpdateNoteList', [NoteListController::class, 'UpdateNoteList']);
 });
+Route::prefix('Auth')->group(function () {
+    Route::post('/register', [AuthController::class, 'register']);
+    Route::post('/login', [AuthController::class, 'login']);
 
-Route::post('/register', [AuthController::class, 'register']);
+});
 
 Route::prefix('Testing')->group(function () {
     Route::get('/KoneksiDB', [ControllerTesting::class, 'index']);

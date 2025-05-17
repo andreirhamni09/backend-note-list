@@ -16,9 +16,9 @@ return new class extends Migration
             $table->unsignedInteger('id_user');
             $table->text('title_note_lists');
             $table->text('deskripsi_note_lists');
-            $table->dateTime('created_at', $precision = 0);
-            $table->dateTime('updated_at', $precision = 0);
-            $table->dateTime('deleted_at', $precision = 0);
+            $table->dateTime('created_at', $precision = 0)->nullable();
+            $table->dateTime('updated_at', $precision = 0)->nullable();
+            $table->dateTime('deleted_at', $precision = 0)->nullable();
             $table->foreign('id_user')->references('id_user')->on('users')->onUpdate('cascade')->onDelete('cascade');
         });
     }
