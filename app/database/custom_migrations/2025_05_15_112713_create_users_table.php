@@ -16,9 +16,9 @@ return new class extends Migration
             $table->string('email_user', 100);
             $table->text('password_user');
             $table->string('nama_user', 100);
-            $table->dateTime('created_at', $precision = 0);
-            $table->dateTime('updated_at', $precision = 0);
-            $table->dateTime('deleted_at', $precision = 0);
+            $table->dateTime('created_at', $precision = 0)->nullable();
+            $table->dateTime('updated_at', $precision = 0)->nullable();
+            $table->dateTime('deleted_at', $precision = 0)->nullable();
         });
     }
 

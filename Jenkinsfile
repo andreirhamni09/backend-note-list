@@ -8,59 +8,31 @@ pipeline {
     }
 
     stages {
-        stage('Checkout') {
-            steps {
-                checkout scm
-            }
+      stage('Checkout') {
+        steps {
+            git url: 'https://github.com/andreirhamni09/backend-note-list.git', branch: 'master'
         }
+      }
 
-        stage('Build Images') {
-            steps {
-                bat "docker-compose -f ${COMPOSE_FILE} build"
-            }
+      stage('Build and Start Docker') {
+        steps {
+            bat 'docker-compose down --remove-orphans'
+            bat 'docker-compose build --no-cache'
+            bat 'docker-compose up -d'
         }
-
-        stage('Start Containers') {
-            steps {
-                bat "docker-compose -f ${COMPOSE_FILE} up -d"
-            }
+      }
+      stage('Remove .env') {
+        steps {
+          bat 'del app\\.env'
         }
-        stage('Remove .env') {
-          steps {
-            bat 'del app\\.env'
-          }
-        }
+      }
         
-        stage('Prepare .env') {
-          steps {
-            bat 'if not exist app\\.env copy app\\.env.example app\\.env'
-            bat 'icacls app\\.env /grant Everyone:F'
-          }
+      stage('Prepare .env') {
+        steps {
+          bat 'if not exist app\\.env copy app\\.env.example app\\.env'
+          bat 'icacls app\\.env /grant Everyone:F'
         }
-
-      //   stage('Wait for MySQL Ready') {
-      //     steps {
-      //         script {
-      //             def ready = false
-      //             for (int i = 0; i < 15; i++) {
-      //                 def result = bat(
-      //                     script: "docker exec backend-note-list php -r \"@mysqli_connect('mysql-note-list', 'root', 'P@ssw0rd') ? exit(0) : exit(1);\"",
-      //                     returnStatus: true
-      //                 )
-      //                 if (result == 0) {
-      //                     ready = true
-      //                     break
-      //                 }
-      //                 echo "MySQL belum siap, tunggu 5 detik..."
-      //                 bat 'ping -n 6 127.0.0.1 >nul'
-      //             }
-      //             if (!ready) {
-      //                 error "MySQL tidak siap setelah timeout"
-      //             }
-      //         }
-      //     }
-      // }
-
+      }
       stage('Run Laravel Migration') {
           steps {
               bat "docker exec ${APP_CONTAINER} php artisan config:clear"
