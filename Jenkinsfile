@@ -37,7 +37,7 @@ pipeline {
           steps {
               bat "docker exec ${APP_CONTAINER} php artisan config:clear"
               bat "docker exec ${APP_CONTAINER} php artisan cache:clear"
-              bat "docker exec ${APP_CONTAINER} php artisan migrate:fresh --path=database/custom_migrations --force"
+              bat "docker exec ${APP_CONTAINER} php artisan migrate --path=database/custom_migrations --force"
           }
       }
 

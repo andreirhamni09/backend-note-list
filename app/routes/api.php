@@ -28,7 +28,3 @@ Route::prefix('Auth')->group(function () {
     Route::post('/login', [AuthController::class, 'login']);
 
 });
-
-Route::prefix('Testing')->group(function () {
-    Route::get('/KoneksiDB', [ControllerTesting::class, 'index']);
-});

@@ -5,6 +5,7 @@ services:
       dockerfile: docker/php/Dockerfile
     container_name: backend-note-list
     image: backend-note-list
+    restart: always
     volumes:
       - ./app:/var/www
     depends_on:
@@ -15,6 +16,7 @@ services:
   webserver:
     image: nginx:latest
     container_name: nginx-note-list
+    restart: always
     ports:
       - "8000:80"
     volumes:
