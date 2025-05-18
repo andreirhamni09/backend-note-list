@@ -22,4 +22,8 @@ class AuthController extends Controller
         $login      = $this->authRepositoryInterface->Login($request);
         return response()->json($login);
     }
+    public function logout($id_user){
+        $logout      = $this->authRepositoryInterface->Logout($id_user);
+        return response()->json($logout);
+    }
 }

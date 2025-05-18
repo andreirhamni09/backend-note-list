@@ -73,4 +73,13 @@ class AuthRepository implements AuthRepositoryInterface
             return $this->response->ResponseInternalServerErrorJson($e->getMessage());
         }
     }
+    public function Logout($id_user) {
+        try {
+            $logout  = $this->tokens->DeleteTokens($id_user);
+            $res            = $this->response->ResponseSuccessJson('Berhasil Logout', null);
+            return $res;
+        } catch (Exception $e) {
+            return $this->response->ResponseInternalServerErrorJson($e->getMessage());
+        }
+    }
 }

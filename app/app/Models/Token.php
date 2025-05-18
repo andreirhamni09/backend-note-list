@@ -23,7 +23,6 @@ class Token extends Model
         $tokens = DB::table('tokens')
         ->join('users', 'users.id_user', '=', 'tokens.id_user')
         ->select(
-            'tokens.id_token     as id_token',
             'tokens.id_user      as id_user',
             'tokens.token        as token',
             'tokens.expired      as expired',
@@ -47,7 +46,6 @@ class Token extends Model
         $getToken = DB::table('tokens')
         ->join('users', 'users.id_user', '=', 'tokens.id_user')
         ->select(
-            'tokens.id_token     as id_token',
             'tokens.id_user      as id_user',
             'tokens.token        as token',
             'tokens.expired      as expired',
@@ -64,7 +62,6 @@ class Token extends Model
         $getToken = DB::table('tokens')
         ->join('users', 'users.id_user', '=', 'tokens.id_user')
         ->select(
-            'tokens.id_token     as id_token',
             'tokens.id_user      as id_user',
             'tokens.token        as token',
             'tokens.expired      as expired',
@@ -81,5 +78,4 @@ class Token extends Model
         ->where('tokens.id_user', '=', $id_user)
         ->delete();
     }
-
 }

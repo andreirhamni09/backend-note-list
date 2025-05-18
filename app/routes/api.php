@@ -26,5 +26,5 @@ Route::middleware(['api.token'])->group(function () {
 Route::prefix('Auth')->group(function () {
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/login', [AuthController::class, 'login']);
-
+    Route::delete('/logout/{id_user}', [AuthController::class, 'logout']);
 });
