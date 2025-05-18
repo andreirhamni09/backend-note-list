@@ -15,11 +15,13 @@ use App\Http\Controllers\ControllerTesting;
 |
 */
 
-Route::prefix('NoteList')->group(function () {
-    Route::get('/GetAll/{id_user}', [NoteListController::class, 'GetAll']);
-    Route::get('/GetByIdNoteList/{id_user}/{id_note_lists}', [NoteListController::class, 'GetByIdNoteList']);
-    Route::post('/AddNoteList', [NoteListController::class, 'AddNoteList']);
-    Route::post('/UpdateNoteList', [NoteListController::class, 'UpdateNoteList']);
+Route::middleware(['api.token'])->group(function () {
+    Route::prefix('NoteList')->group(function () {
+        Route::get('/GetAll/{id_user}', [NoteListController::class, 'GetAll']);
+        Route::get('/GetByIdNoteList/{id_user}/{id_note_lists}', [NoteListController::class, 'GetByIdNoteList']);
+        Route::post('/AddNoteList', [NoteListController::class, 'AddNoteList']);
+        Route::post('/UpdateNoteList', [NoteListController::class, 'UpdateNoteList']);
+    });
 });
 Route::prefix('Auth')->group(function () {
     Route::post('/register', [AuthController::class, 'register']);

@@ -14,54 +14,72 @@ class Token extends Model
         return $token;
     }
 
-    public function InsertToken($id_user, $token, $expired) {
-        $getTokenById = $this->GetTokenById($id_user);
-        if($getTokenById == null) {
-            $id = DB::table('tokens')->insertGetId([
+    public function InsertTokenLogin($id_user, $token, $expired) {
+        $id = DB::table('tokens')->insertGetId([
                 'id_user'        => $id_user,
                 'token'          => $token,
                 'expired'        => $expired
             ]);
-            $tokens = DB::table('tokens')
-            ->join('users', 'users.id_user', '=', 'tokens.id_user')
-            ->where('tokens.id_token', '=', $id)
-            ->first();
-            return $tokens;
-        } else {
-            $expired_tokens = Carbon::parse($getTokenById->expired)->isPast();
-            if($expired_tokens) {
-                $deleteToken = $this->DeleteTokens($id_user);
-                if($deleteToken) {
-                    $id = DB::table('tokens')->insertGetId([
-                        'id_user'        => $id_user,
-                        'token'          => $token,
-                        'expired'        => $expired
-                    ]);
-                    $tokens = DB::table('tokens')
-                    ->join('users', 'users.id_user', '=', 'tokens.id_user')
-                    ->where('tokens.id_token', '=', $id)
-                    ->first();
-                    return $tokens;
-                }
-            } else {
-                return $getTokenById;
-            }
-        }
+        $tokens = DB::table('tokens')
+        ->join('users', 'users.id_user', '=', 'tokens.id_user')
+        ->select(
+            'tokens.id_token     as id_token',
+            'tokens.id_user      as id_user',
+            'tokens.token        as token',
+            'tokens.expired      as expired',
+            'users.email_user    as email_user',
+            'users.password_user as password_user',
+            'users.nama_user     as nama_user'
+        )
+        ->where('tokens.id_token', '=', $id)
+        ->first();
+        return $tokens;
     }
 
-    public function GetTokenById($id_user) {
+    public function ReInsertTokenLogin($id_user, $token, $expired) {
+        $this->DeleteTokens($id_user);
+        $reInsertTokenLogin = $this->InsertTokenLogin($id_user, $token, $expired);
+        return $reInsertTokenLogin;        
+    }
+
+
+    public function GetTokenByIdUser($id_user) {
         $getToken = DB::table('tokens')
         ->join('users', 'users.id_user', '=', 'tokens.id_user')
+        ->select(
+            'tokens.id_token     as id_token',
+            'tokens.id_user      as id_user',
+            'tokens.token        as token',
+            'tokens.expired      as expired',
+            'users.email_user    as email_user',
+            'users.password_user as password_user',
+            'users.nama_user     as nama_user'
+        )
         ->where('tokens.id_user', '=', $id_user)
         ->first();
         return $getToken;
     }
 
+    public function GetTokenByToken($token) {
+        $getToken = DB::table('tokens')
+        ->join('users', 'users.id_user', '=', 'tokens.id_user')
+        ->select(
+            'tokens.id_token     as id_token',
+            'tokens.id_user      as id_user',
+            'tokens.token        as token',
+            'tokens.expired      as expired',
+            'users.email_user    as email_user',
+            'users.password_user as password_user',
+            'users.nama_user     as nama_user'
+        )
+        ->where('tokens.token', '=', $token)
+        ->first();
+        return $getToken;
+    }
     public function DeleteTokens($id_user) {
-        $deleteToken = DB::table('tokens')
+        DB::table('tokens')
         ->where('tokens.id_user', '=', $id_user)
         ->delete();
-        return $deleteToken;
     }
 
 }

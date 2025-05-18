@@ -98,4 +98,23 @@ class Response extends Model
         return $res;
     }
 # -- Response Validate Error
+
+# -- Response Unauthorized
+    public function ResponseUnauthorized($status = 401) {
+        $unauthorized   = [
+            'status'    => $status
+        ];
+        return $unauthorized;
+    }
+    public function ResponseUnauthorizedJson($messages) {
+        $unauthorized   = $this->ResponseUnauthorized();
+        $res = [
+            'status'      => $unauthorized['status'],
+            'messages'    => $messages,
+            'error'       => '',
+            'data'        => []
+        ];
+        return $res;
+    }
+# -- Response Unauthorized
 }
