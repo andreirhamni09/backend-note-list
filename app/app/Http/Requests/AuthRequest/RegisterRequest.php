@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\AuthRequest;
 
+use App\Helpers\ResponseHelper;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -41,8 +42,8 @@ class RegisterRequest extends FormRequest
     {
         $errors         = $validator->errors();
         $input          = $this->all();
-        $responseApi    = new Response();
-        $res            = $responseApi->ResponseUnvalidatedJson("Request register gagal", $errors, $input);
+        $responseApi    = new ResponseHelper();
+        $res            = $responseApi->validationError("Request register gagal", $errors, $input);
         throw new HttpResponseException(response()->json($res));
     }
 }

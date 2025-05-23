@@ -12,10 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('tokens', function (Blueprint $table) {
-            // `id_token``id_user``token``expired`
-            $table->increments('id_token');
+            $table->string('token', 191)->primary()->unique();
             $table->unsignedInteger('id_user');
-            $table->text('token');
             $table->dateTime('expired', $precision = 0);
             $table->foreign('id_user')->references('id_user')->on('users')->onUpdate('cascade')->onDelete('cascade');
         });

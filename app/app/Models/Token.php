@@ -5,7 +5,6 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Carbon;
 
 class Token extends Model
 {
@@ -15,7 +14,7 @@ class Token extends Model
     }
 
     public function InsertTokenLogin($id_user, $token, $expired) {
-        $id = DB::table('tokens')->insertGetId([
+        DB::table('tokens')->insert([
                 'id_user'        => $id_user,
                 'token'          => $token,
                 'expired'        => $expired
@@ -30,15 +29,15 @@ class Token extends Model
             'users.password_user as password_user',
             'users.nama_user     as nama_user'
         )
-        ->where('tokens.id_token', '=', $id)
+        ->where('tokens.token', '=', $token)
         ->first();
         return $tokens;
     }
 
-    public function ReInsertTokenLogin($id_user, $token, $expired) {
-        $this->DeleteTokens($id_user);
-        $reInsertTokenLogin = $this->InsertTokenLogin($id_user, $token, $expired);
-        return $reInsertTokenLogin;        
+    public function UpdateToken($id_user, $token, $expired) {
+        DB::table('tokens')->where('id_user', '=', $id_user)->update(['expired' => $expired]);
+        $tokens = $this->GetTokenByToken($token);
+        return $tokens;
     }
 
 

@@ -2,9 +2,9 @@
 
 namespace App\Http\Middleware;
 
+use App\Helpers\ResponseHelper;
 use Closure;
 use Illuminate\Http\Request;
-use App\Models\Response;
 use App\Models\Token;
 use Illuminate\Support\Carbon;
 
@@ -13,7 +13,7 @@ class ApiMiddleware
     protected $m_response, $m_token;
 
     public function __construct() {
-        $this->m_response = new Response();
+        $this->m_response = new ResponseHelper();
         $this->m_token    = new Token();
     }
 
@@ -21,7 +21,7 @@ class ApiMiddleware
     {
         $authHeader         = $request->header('Authorization');
         if (!$authHeader || !str_starts_with($authHeader, 'Bearer ')) {
-            $response       = $this->m_response->ResponseUnauthorizedJson('Akses API Membutuhkan Token');
+            $response       = $this->m_response->unauthorized('Akses API Membutuhkan Token');
             return response()->json($response);
         }
         $token_str          = substr($authHeader, 7);
@@ -31,14 +31,14 @@ class ApiMiddleware
             # 2. Cek Apakah Token Expired Atau Tidak
             $cekTokenExpired = Carbon::parse($getTokenByToken->expired)->isPast();
             if($cekTokenExpired) {
-                $response       = $this->m_response->ResponseUnauthorizedJson('Mohon Melakukan Login Ulang Mendapatkan Akses API Token (Token Sudah Expired)');
+                $response   = $this->m_response->unauthorized('Mohon Melakukan Login Ulang Mendapatkan Akses API Token (Token Sudah Expired)');
                 return response()->json($response);
             } else {
                 return $next($request);
             }
         } else { # Jika Tidak Ada
-            $response       = $this->m_response->ResponseUnauthorizedJson('Mohon Melakukan Login Untuk Mendapatkan Akses API Token');
-            return response()->json($response);
+            $response   = $this->m_response->unauthorized('Mohon Melakukan Login Untuk Mendapatkan Akses API Token');
+            return response()->json($response); 
         }
     }
 }

@@ -8,4 +8,5 @@ interface NoteListRepositoryInterface
     public function GetByIdNoteList($id_user, $id_note_lists);
     public function AddNoteList(AddNoteListRequest $request);
     public function UpdateNoteList(UpdateNoteListRequest $request);
+    public function DeleteNoteList($id_user, $id_note_lists);
 }

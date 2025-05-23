@@ -2,10 +2,10 @@
 
 namespace App\Http\Requests\AuthRequest;
 
+use App\Helpers\ResponseHelper;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
-use App\Models\Response;
 
 class LoginRequest extends FormRequest
 {
@@ -37,8 +37,8 @@ class LoginRequest extends FormRequest
     {
         $errors         = $validator->errors();
         $input          = $this->all();
-        $responseApi    = new Response();
-        $res            = $responseApi->ResponseUnvalidatedJson("Login gagal", $errors, $input);
+        $responseApi    = new ResponseHelper();
+        $res            = $responseApi->validationError("Login gagal", $errors, $input);
         throw new HttpResponseException(response()->json($res));
     }
 }

@@ -8,10 +8,17 @@ use Illuminate\Support\ServiceProvider;
     use App\Repositories\NoteList\NoteListRepository;
 # -- NoteListInterface
 
-# -- AuthListInterface
+# -- AuthInterface
     use App\Repositories\Auth\AuthRepositoryInterface;
     use App\Repositories\Auth\AuthRepository;
-# -- AuthListInterface
+# -- AuthInterface
+
+# -- NoteTaskInterface
+    use App\Repositories\NoteTask\NoteTaskRepositoryInterface;
+    use App\Repositories\NoteTask\NoteTaskRepository;    
+# -- NoteTaskInterface
+
+#
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -22,6 +29,7 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->bind(NoteListRepositoryInterface::class, NoteListRepository::class);
         $this->app->bind(AuthRepositoryInterface::class, AuthRepository::class);
+        $this->app->bind(NoteTaskRepositoryInterface::class, NoteTaskRepository::class);
     }
 
     /**

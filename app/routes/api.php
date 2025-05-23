@@ -2,7 +2,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\NoteListController;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\ControllerTesting;
+use App\Http\Controllers\NoteTaskController;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,6 +21,19 @@ Route::middleware(['api.token'])->group(function () {
         Route::get('/GetByIdNoteList/{id_user}/{id_note_lists}', [NoteListController::class, 'GetByIdNoteList']);
         Route::post('/AddNoteList', [NoteListController::class, 'AddNoteList']);
         Route::post('/UpdateNoteList', [NoteListController::class, 'UpdateNoteList']);
+        Route::delete('/DeleteNoteList/{id_user}/{id_note_lists}', [NoteListController::class, 'DeleteNoteList']);
+    });
+    Route::prefix('NoteTask')->group(function () {
+        Route::get('/GetAll/{id_note_lists}', [NoteTaskController::class, 'GetAll']);
+        Route::get('/GetById/{id_note_task}', [NoteTaskController::class, 'GetById']);        
+        Route::post('/AddNoteTask', [NoteTaskController::class, 'AddNoteTask']);
+        Route::post('/UpdateNoteTask/{id_note_task}', [NoteTaskController::class, 'UpdateNoteTask']);
+        Route::post('/UpdateStatusNoteTask/{id_note_task}', [NoteTaskController::class, 'UpdateStatusNoteTask']);
+        Route::delete('/DeleteTask/{id_note_task}', [NoteTaskController::class, 'DeleteTask']);
+        // Route::get('/GetByIdNoteTasl/{id_user}/{id_note_lists}/{id_note_list_task}', [NoteListController::class, 'GetByIdNoteList']);
+        // Route::post('/AddNoteList', [NoteListController::class, 'AddNoteList']);
+        // Route::post('/UpdateNoteList', [NoteListController::class, 'UpdateNoteList']);
+        // Route::delete('/DeleteNoteList/{id_user}/{id_note_lists}', [NoteListController::class, 'DeleteNoteList']);
     });
 });
 Route::prefix('Auth')->group(function () {

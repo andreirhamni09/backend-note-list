@@ -2,7 +2,7 @@
 namespace App\Repositories\Auth;
 use App\Http\Requests\AuthRequest\RegisterRequest;
 use App\Http\Requests\AuthRequest\LoginRequest;
-use App\Models\Response;
+use App\Helpers\ResponseHelper;
 use App\Models\User;
 use Exception;
 use Illuminate\Support\Facades\Hash;
@@ -15,7 +15,7 @@ class AuthRepository implements AuthRepositoryInterface
     
     public function __construct()
     {
-        $this->response     = new Response();
+        $this->response     = new ResponseHelper();
         $this->users        = new User();
         $this->tokens       = new Token();
     }
@@ -31,10 +31,9 @@ class AuthRepository implements AuthRepositoryInterface
             $password_user  = Hash::make($request->password_user);
             $created_at     = $created_at;
             $user = $this->users->Register($nama_user, $email_user, $password_user, $created_at);
-            $res            = $this->response->ResponseSuccessJson('Berhasil register', $user);
-            return $res;
+            return $this->response->success('Register Berhasil', $user);
         } catch (Exception $e) {
-            return $this->response->ResponseInternalServerErrorJson($e->getMessage());
+            return $this->response->internalError($e->getMessage());
         }
     }
 
@@ -53,33 +52,36 @@ class AuthRepository implements AuthRepositoryInterface
                     $cekTokenExistExpired = Carbon::parse($getTokenByIdUser->expired)->isPast();
                     #Pengecekan apakah token yang didalam sistem sudah expired atau belum
                     if($cekTokenExistExpired) { # Jika Token Sudah Expired   
-                        $reInsertTokenLogin        = $this->tokens->ReInsertTokenLogin($id_user, $token, $expired);
-                        $response                       = $this->response->ResponseSuccessJson('Login Succesfull', $reInsertTokenLogin);
+                        $updateToken        = $this->tokens->UpdateToken($id_user, $token, $expired);
+                        $response                       = $this->response->success('Login Succesfull', $updateToken);
                     } else {
-                        $response                = $this->response->ResponseSuccessJson('Login Succesfull', $getTokenByIdUser);
+                        $response                = $this->response->success('Login Succesfull', $getTokenByIdUser);
                     }
                 } else { # Jika Token Belum Ada (Insert Token)
                     $id_user            = $user->id_user;
                     $token              = $this->CreateTokenLogin($user->password_user);
                     $expired            = Carbon::now()->addHours(2);
                     $insertTokenLogin   = $this->tokens->InsertTokenLogin($id_user, $token, $expired);
-                    $response                = $this->response->ResponseSuccessJson('Login Succesfull', $insertTokenLogin);
+                    $response                = $this->response->success('Login Succesfull', $insertTokenLogin);
                 }
             } else {
-                $response               = $this->response->ResponseEmptyJson('Password yang ada masukan tidak cocok');
+                $data                   = [
+                    'email_user'        => $request->email_user,
+                    'password'          => $request->password_user
+                ];
+                $response               = $this->response->empty('Password yang ada masukan tidak cocok', $data);
             }
             return $response;
         } catch (Exception $e) {
-            return $this->response->ResponseInternalServerErrorJson($e->getMessage());
+            return $this->response->internalError($e->getMessage());
         }
     }
     public function Logout($id_user) {
         try {
             $logout  = $this->tokens->DeleteTokens($id_user);
-            $res            = $this->response->ResponseSuccessJson('Berhasil Logout', null);
-            return $res;
+            return $this->response->success('Berhasil Logout', null);
         } catch (Exception $e) {
-            return $this->response->ResponseInternalServerErrorJson($e->getMessage());
+            return $this->response->internalError($e->getMessage());
         }
     }
 }

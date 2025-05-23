@@ -2,10 +2,10 @@
 
 namespace App\Http\Requests\NoteListRequest;
 
+use App\Helpers\ResponseHelper;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
-use App\Models\Response;
 
 class AddNoteListRequest extends FormRequest
 {
@@ -41,8 +41,8 @@ class AddNoteListRequest extends FormRequest
     {
         $errors         = $validator->errors();
         $input          = $this->all();
-        $responseApi    = new Response();
-        $res            = $responseApi->ResponseUnvalidatedJson("Request register gagal", $errors, $input);
+        $responseApi    = new ResponseHelper();
+        $res            = $responseApi->validationError("Add Data Note List Gagal", $errors, $input);
         throw new HttpResponseException(response()->json($res));
     }
 }
