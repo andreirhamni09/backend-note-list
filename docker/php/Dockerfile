@@ -15,8 +15,12 @@ WORKDIR /var/www
 # Copy source Laravel app
 COPY ./app /var/www
 
+# Copy skrip wait-for-mysql dan berikan permission executable
+COPY ./docker/wait-for-mysql.sh /wait-for-mysql.sh
+RUN chmod +x /wait-for-mysql.sh
+
 # Install dependencies Laravel via Composer
-RUN composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
+RUN composer install --no-interaction --prefer-dist --optimize-autoloader
 
 # Set permission agar user www-data bisa akses
 RUN chown -R www-data:www-data /var/www \
