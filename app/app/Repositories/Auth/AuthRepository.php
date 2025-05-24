@@ -84,4 +84,12 @@ class AuthRepository implements AuthRepositoryInterface
             return $this->response->internalError($e->getMessage());
         }
     }
+    public function tokenExpired($token) {
+        try {
+            $token = $this->tokens->GetTokenByToken($token);
+            return $this->response->success('Data Token', $token);
+        } catch (Exception $e) {
+            return $this->response->internalError($e->getMessage());
+        }
+    }
 }

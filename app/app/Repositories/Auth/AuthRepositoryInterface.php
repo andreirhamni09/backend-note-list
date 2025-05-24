@@ -9,4 +9,5 @@ interface AuthRepositoryInterface
     public function Register(RegisterRequest $request);
     public function Login(LoginRequest $request);
     public function Logout($id_user);
+    public function tokenExpired($token);
 }

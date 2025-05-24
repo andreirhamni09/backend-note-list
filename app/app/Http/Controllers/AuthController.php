@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\AuthRequest\LoginRequest;
 use App\Http\Requests\AuthRequest\RegisterRequest;
 use App\Repositories\Auth\AuthRepositoryInterface;
+use Illuminate\Http\Request;
 class AuthController extends Controller
 {
     protected $authRepositoryInterface;
@@ -25,5 +26,10 @@ class AuthController extends Controller
     public function logout($id_user){
         $logout      = $this->authRepositoryInterface->Logout($id_user);
         return response()->json($logout);
+    }
+    public function tokenExpired(Request $request) {
+        $token_str  = $request->input('token');
+        $token      = $this->authRepositoryInterface->tokenExpired($token_str);
+        return response()->json($token);
     }
 }
