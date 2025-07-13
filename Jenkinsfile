@@ -13,19 +13,20 @@ pipeline {
                 git url: 'https://github.com/andreirhamni09/backend-note-list.git', branch: 'master'
             }
         }
-         stage('Ensure MySQL is Running') {
+
+        stage('Ensure MySQL is Running') {
             steps {
                 script {
-                    def mysqlRunning = bat(
+                    def mysqlRunning = sh(
                         script: 'docker ps --filter "name=mysql-note-list" --filter "status=running" --format "{{.Names}}"',
                         returnStdout: true
                     ).trim()
 
                     if (mysqlRunning == '') {
                         echo "MySQL container is not running. Building and starting MySQL..."
-                        bat 'docker-compose build mysql'
-                        bat 'docker-compose up -d mysql'
-                        bat 'timeout /t 10'
+                        sh 'docker-compose build mysql'
+                        sh 'docker-compose up -d mysql'
+                        sh 'sleep 10'
                     } else {
                         echo "MySQL container is already running."
                     }
@@ -35,31 +36,31 @@ pipeline {
 
         stage('Rebuild App and Webserver Only') {
             steps {
-                bat 'docker-compose rm -fs app webserver'
-                bat 'docker-compose build --no-cache app webserver'
-                bat 'docker-compose up -d app webserver'
+                sh 'docker-compose rm -fs app webserver || true'
+                sh 'docker-compose build --no-cache app webserver'
+                sh 'docker-compose up -d app webserver'
             }
         }
 
         stage('Remove .env') {
             steps {
-                bat 'del app\\.env'
+                sh 'rm -f app/.env'
             }
         }
 
         stage('Prepare .env') {
             steps {
-                bat 'if not exist app\\.env copy app\\.env.example app\\.env'
-                bat 'icacls app\\.env /grant Everyone:F'
+                sh 'cp -n app/.env.example app/.env || true'
+                sh 'chmod 777 app/.env'
             }
         }
 
         stage('Run Laravel Migration') {
             steps {
-                bat "docker exec ${APP_CONTAINER} php artisan config:clear"
-                bat "docker exec ${APP_CONTAINER} php artisan cache:clear"
-                bat "docker exec ${APP_CONTAINER} php artisan migrate:fresh --path=database/custom_migrations --force"
-                bat "docker exec ${APP_CONTAINER} php artisan db:seed"
+                sh "docker exec ${APP_CONTAINER} php artisan config:clear"
+                sh "docker exec ${APP_CONTAINER} php artisan cache:clear"
+                sh "docker exec ${APP_CONTAINER} php artisan migrate:fresh --path=database/custom_migrations --force"
+                sh "docker exec ${APP_CONTAINER} php artisan db:seed"
             }
         }
 
