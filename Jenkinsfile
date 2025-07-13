@@ -9,18 +9,11 @@ pipeline {
 
     stages {
         stage('Checkout') {
-             steps {
-                checkout([
-                    $class: 'GitSCM',
-                    branches: [[name: '*/master']], // ganti 'main' jika default branch-mu 'master'
-                    userRemoteConfigs: [[
-                        url: 'https://github.com/andreirhamni09/backend-note-list.git',
-                        credentialsId: 'github-token-jenkins'
-                    ]]
-                ])
-            }            
+            steps {
+                git url: 'https://github.com/andreirhamni09/backend-note-list.git', branch: 'master'
+            }
         }
-         stage('Ensure MySQL is Running') {
+        stage('Ensure MySQL is Running') {
             steps {
                 script {
                     def mysqlRunning = bat(
