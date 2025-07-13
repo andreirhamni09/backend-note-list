@@ -20,7 +20,7 @@ COPY ./docker/wait-for-mysql.sh /wait-for-mysql.sh
 RUN chmod +x /wait-for-mysql.sh
 
 # Install dependencies Laravel via Composer
-RUN composer install
+RUN composer install --no-interaction --prefer-dist --optimize-autoloader
 
 # Set permission agar user www-data bisa akses
 RUN chown -R www-data:www-data /var/www \

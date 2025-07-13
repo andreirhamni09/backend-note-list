@@ -53,6 +53,12 @@ pipeline {
                 bat 'icacls app\\.env /grant Everyone:F'
             }
         }
+        
+        stage('Install Dependencies') {
+            steps {
+                bat "docker exec ${APP_CONTAINER} composer install --no-interaction --prefer-dist --optimize-autoloader"
+            }
+        }
 
         stage('Run Laravel Migration') {
             steps {
