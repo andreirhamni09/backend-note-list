@@ -2,9 +2,8 @@ pipeline {
     agent any
 
     environment {
-        COMPOSE_FILE = 'docker-compose.yml'
         APP_CONTAINER = 'backend-note-list'
-        MYSQL_CONTAINER = 'mysql-note-list'
+        COMPOSE_CMD = 'docker compose' // gunakan 'docker-compose' jika Docker Compose v1
     }
 
     stages {
@@ -14,7 +13,7 @@ pipeline {
             }
         }
 
-        stage('Ensure MySQL is Running') {
+        stage('Start MySQL (if needed)') {
             steps {
                 script {
                     def mysqlRunning = sh(
@@ -23,57 +22,57 @@ pipeline {
                     ).trim()
 
                     if (mysqlRunning == '') {
-                        echo "MySQL container is not running. Building and starting MySQL..."
-                        sh 'docker-compose build mysql'
-                        sh 'docker-compose up -d mysql'
-                        sh 'sleep 10'
+                        echo "Starting MySQL container..."
+                        sh "${COMPOSE_CMD} up -d mysql"
+                        sh 'sleep 10' // delay to allow MySQL to initialize
                     } else {
-                        echo "MySQL container is already running."
+                        echo "MySQL already running."
                     }
                 }
             }
         }
 
-        stage('Rebuild App and Webserver Only') {
+        stage('Rebuild App & Webserver Containers') {
             steps {
-                sh 'docker-compose rm -fs app webserver || true'
-                sh 'docker-compose build --no-cache app webserver'
-                sh 'docker-compose up -d app webserver'
+                script {
+                    sh "${COMPOSE_CMD} stop app webserver || true"
+                    sh "${COMPOSE_CMD} rm -f app webserver || true"
+                    sh "${COMPOSE_CMD} build --no-cache app"
+                    sh "${COMPOSE_CMD} up -d app webserver"
+                }
             }
         }
 
-        stage('Remove .env') {
+        stage('Setup .env') {
             steps {
-                sh 'rm -f app/.env'
+                script {
+                    // Bersihkan dan siapkan file .env
+                    sh 'rm -f app/.env || true'
+                    sh 'cp -n app/.env.example app/.env || true'
+                    sh 'chmod 777 app/.env'
+                }
             }
         }
 
-        stage('Prepare .env') {
+        stage('Run Laravel Migrations & Seeders') {
             steps {
-                sh 'cp -n app/.env.example app/.env || true'
-                sh 'chmod 777 app/.env'
-            }
-        }
-
-        stage('Run Laravel Migration') {
-            steps {
-                sh "docker exec ${APP_CONTAINER} php artisan config:clear"
-                sh "docker exec ${APP_CONTAINER} php artisan cache:clear"
-                sh "docker exec ${APP_CONTAINER} php artisan migrate:fresh --path=database/custom_migrations --force"
-                sh "docker exec ${APP_CONTAINER} php artisan db:seed"
+                sh "${COMPOSE_CMD} exec -T ${APP_CONTAINER} php artisan config:clear"
+                sh "${COMPOSE_CMD} exec -T ${APP_CONTAINER} php artisan cache:clear"
+                sh "${COMPOSE_CMD} exec -T ${APP_CONTAINER} php artisan migrate:fresh --path=database/custom_migrations --force"
+                sh "${COMPOSE_CMD} exec -T ${APP_CONTAINER} php artisan db:seed"
             }
         }
 
         stage('Finish') {
             steps {
-                echo 'Deployment selesai, aplikasi sudah berjalan!'
+                echo '✅ Deployment selesai, aplikasi sudah berjalan!'
             }
         }
     }
 
     post {
         failure {
-            echo 'Build gagal, cek log untuk detail kesalahan.'
+            echo '❌ Build gagal, cek log error di atas.'
         }
     }
 }
