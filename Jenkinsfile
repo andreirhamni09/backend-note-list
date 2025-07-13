@@ -9,14 +9,16 @@ pipeline {
 
     stages {
         stage('Checkout') {
-            checkout([
-            $class: 'GitSCM',
-            branches: [[name: '*/master']], // ganti 'main' jika default branch-mu 'master'
-            userRemoteConfigs: [[
-                    url: 'https://github.com/andreirhamni09/backend-note-list.git',
-                    credentialsId: 'github-token-jenkins'
-                ]]
-            ])
+             steps {
+                checkout([
+                    $class: 'GitSCM',
+                    branches: [[name: '*/master']], // ganti 'main' jika default branch-mu 'master'
+                    userRemoteConfigs: [[
+                        url: 'https://github.com/andreirhamni09/backend-note-list.git',
+                        credentialsId: 'github-token-jenkins'
+                    ]]
+                ])
+            }            
         }
          stage('Ensure MySQL is Running') {
             steps {
