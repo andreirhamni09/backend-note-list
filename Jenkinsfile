@@ -13,32 +13,43 @@ pipeline {
             }
         }
 
-        stage('Start MySQL (if needed)') {
+        // stage('Start MySQL (if needed)') {
+        //     steps {
+        //         script {
+        //             def mysqlRunning = sh(
+        //                 script: 'docker ps --filter "name=mysql-note-list" --filter "status=running" --format "{{.Names}}"',
+        //                 returnStdout: true
+        //             ).trim()
+
+        //             if (mysqlRunning == '') {
+        //                 echo "Starting MySQL container..."
+        //                 sh "${COMPOSE_CMD} up -d mysql"
+        //                 sh 'sleep 10' // delay to allow MySQL to initialize
+        //             } else {
+        //                 echo "MySQL already running."
+        //             }
+        //         }
+        //     }
+        // }
+
+        // stage('Rebuild App & Webserver Containers') {
+        //     steps {
+        //         script {
+        //             sh "${COMPOSE_CMD} stop app webserver || true"
+        //             sh "${COMPOSE_CMD} rm -f app webserver || true"
+        //             sh "${COMPOSE_CMD} build --no-cache app"
+        //             sh "${COMPOSE_CMD} up -d app webserver"
+        //         }
+        //     }
+        // }
+
+        
+        stage('Build & Run Docker') {
             steps {
                 script {
-                    def mysqlRunning = sh(
-                        script: 'docker ps --filter "name=mysql-note-list" --filter "status=running" --format "{{.Names}}"',
-                        returnStdout: true
-                    ).trim()
-
-                    if (mysqlRunning == '') {
-                        echo "Starting MySQL container..."
-                        sh "${COMPOSE_CMD} up -d mysql"
-                        sh 'sleep 10' // delay to allow MySQL to initialize
-                    } else {
-                        echo "MySQL already running."
-                    }
-                }
-            }
-        }
-
-        stage('Rebuild App & Webserver Containers') {
-            steps {
-                script {
-                    sh "${COMPOSE_CMD} stop app webserver || true"
-                    sh "${COMPOSE_CMD} rm -f app webserver || true"
-                    sh "${COMPOSE_CMD} build --no-cache app"
-                    sh "${COMPOSE_CMD} up -d app webserver"
+                    bat 'docker-compose down --volumes'
+                    bat 'docker-compose build --no-cache'
+                    bat 'docker-compose up -d'
                 }
             }
         }
