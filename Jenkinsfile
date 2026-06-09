@@ -4,7 +4,7 @@ pipeline {
     environment {
         COMPOSE_FILE = 'docker-compose.yml'
         APP_CONTAINER = 'backend-note-list'
-        MYSQL_CONTAINER = 'mysql-note-list'
+
     }
 
     stages {
@@ -13,25 +13,7 @@ pipeline {
                 git url: 'https://github.com/andreirhamni09/backend-note-list.git', branch: 'master'
             }
         }
-        stage('Ensure MySQL is Running') {
-            steps {
-                script {
-                    def mysqlRunning = bat(
-                        script: 'docker ps --filter "name=mysql-note-list" --filter "status=running" --format "{{.Names}}"',
-                        returnStdout: true
-                    ).trim()
 
-                    if (mysqlRunning == '') {
-                        echo "MySQL container is not running. Building and starting MySQL..."
-                        bat 'docker-compose build mysql'
-                        bat 'docker-compose up -d mysql'
-                        bat 'timeout /t 10'
-                    } else {
-                        echo "MySQL container is already running."
-                    }
-                }
-            }
-        }
 
         stage('Rebuild App and Webserver Only') {
             steps {
